@@ -16,8 +16,8 @@ interface ServiceSelectorProps {
   return (
     <div className="w-full max-w-6xl mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Additional Services</h2>
-        <p className="text-gray-600">Select additional services you may need</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">{religion.name} Services</h2>
+        <p className="text-gray-600">Select additional services specific to {religion.name} traditions</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
