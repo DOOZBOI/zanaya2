@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookingData } from '../types';
-import { MessageCircle, Check } from 'lucide-react';
+import { MessageCircle, Check, Clock } from 'lucide-react';
 
 interface OrderSummaryProps {
   bookingData: BookingData;
@@ -8,6 +8,8 @@ interface OrderSummaryProps {
 }
 
 export function OrderSummary({ bookingData, onSubmit }: OrderSummaryProps) {
+  const [messagePending, setMessagePending] = React.useState(false);
+  
   const { religion, selectedKitItems, selectedServices, personalInfo } = bookingData;
   
   const kitTotal = selectedKitItems.reduce((sum, item) => sum + item.price, 0);
@@ -54,9 +56,70 @@ export function OrderSummary({ bookingData, onSubmit }: OrderSummaryProps) {
   const handleWhatsAppSubmit = () => {
     const message = generateWhatsAppMessage();
     const whatsappUrl = `https://wa.me/918273441052?text=${message}`;
+    
+    setMessagePending(true);
+    
+    // Open WhatsApp
     window.open(whatsappUrl, '_blank');
-    onSubmit();
+    
+    // Listen for when user returns to the tab (indicating they've sent the message)
+    const handleVisibilityChange = () => {
+      if (!document.hidden && messagePending) {
+        // Small delay to ensure user had time to send the message
+        setTimeout(() => {
+          setMessagePending(false);
+          onSubmit();
+        }, 1000);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Also listen for window focus as a backup
+    const handleWindowFocus = () => {
+      if (messagePending) {
+        setTimeout(() => {
+          setMessagePending(false);
+          onSubmit();
+        }, 1000);
+        window.removeEventListener('focus', handleWindowFocus);
+      }
+    };
+    
+    window.addEventListener('focus', handleWindowFocus);
   };
+
+  // Show pending state if message is being sent
+  if (messagePending) {
+    return (
+      <div className="w-full max-w-2xl mx-auto text-center">
+        <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center">
+              <Clock size={48} className="text-yellow-600 animate-pulse" />
+            </div>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Message Pending</h2>
+          <p className="text-gray-600 mb-6 text-lg">
+            Please complete sending your message on WhatsApp to confirm your booking.
+          </p>
+          <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+            <p className="text-yellow-800 text-sm">
+              Once you send the message on WhatsApp and return to this page, 
+              your booking confirmation will be displayed.
+            </p>
+          </div>
+          <button
+            onClick={() => setMessagePending(false)}
+            className="mt-6 text-blue-600 hover:text-blue-700 font-medium text-sm underline"
+          >
+            Cancel and go back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">
