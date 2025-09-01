@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BookingData, Religion, KitItem, Service } from './types';
 import { religions } from './data/religions';
 import { religionKits } from './data/kits';
-import { services } from './data/services';
+import { servicesByReligion } from './data/services';
 
 import { StepIndicator } from './components/StepIndicator';
 import { ReligionSelector } from './components/ReligionSelector';
@@ -134,11 +134,15 @@ function App() {
         );
       
       case 2:
+        if (!bookingData.religion) return null;
+        const availableServices = servicesByReligion[bookingData.religion.id as keyof typeof servicesByReligion] || [];
+        
         return (
           <ServiceSelector
-            services={services}
+            services={availableServices}
             selectedServices={bookingData.selectedServices}
             onToggleService={handleServiceToggle}
+            religion={bookingData.religion}
           />
         );
       

@@ -1,14 +1,14 @@
 import React from 'react';
-import { Service } from '../types';
+import { Service, Religion } from '../types';
 import { Clock, Plus, Check } from 'lucide-react';
 
 interface ServiceSelectorProps {
   services: Service[];
   selectedServices: Service[];
   onToggleService: (service: Service) => void;
+  religion: Religion;
 }
 
-export function ServiceSelector({ services, selectedServices, onToggleService }: ServiceSelectorProps) {
   const isSelected = (service: Service) => selectedServices.some(selected => selected.id === service.id);
 
   const totalPrice = selectedServices.reduce((sum, service) => sum + service.price, 0);

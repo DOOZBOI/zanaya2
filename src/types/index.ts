@@ -20,6 +20,7 @@ export interface Service {
   description: string;
   price: number;
   duration?: string;
+  religionId: string;
 }
 
 export interface ReligionKit {
