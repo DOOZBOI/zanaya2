@@ -9,6 +9,7 @@ interface ServiceSelectorProps {
   religion: Religion;
 }
 
+export default function ServiceSelector({ services, selectedServices, onToggleService, religion }: ServiceSelectorProps) {
   const isSelected = (service: Service) => selectedServices.some(selected => selected.id === service.id);
 
   const totalPrice = selectedServices.reduce((sum, service) => sum + service.price, 0);
